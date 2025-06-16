@@ -44,7 +44,9 @@ public class EmpleadoServicio implements IEmpleadoServicio {
 
         // Actualizar los datos
         EmpleadoDominio empleadoExistente = existente.get();
-        empleadoExistente.setNombreCompleto(empleado.getNombreCompleto());
+        empleadoExistente.setNombre(empleado.getNombre());
+        empleadoExistente.setAp_paterno(empleado.getAp_paterno());
+        empleadoExistente.setAp_materno(empleado.getAp_materno());
         empleadoExistente.setEstado(empleado.getEstado());
         empleadoExistente.setUsuario(empleado.getUsuario());
         empleadoExistente.setContrasena(empleado.getContrasena());
@@ -76,8 +78,14 @@ public class EmpleadoServicio implements IEmpleadoServicio {
         if (empleado == null) {
             throw new IllegalArgumentException("El empleado no puede ser nulo");
         }
-        if (empleado.getNombreCompleto() == null || empleado.getNombreCompleto().trim().isEmpty()) {
+        if (empleado.getNombre() == null || empleado.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre completo no puede estar vacío");
+        }
+        if (empleado.getAp_paterno() == null || empleado.getAp_paterno().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido paterno no puede estar vacío");
+        }
+        if (empleado.getAp_materno() == null || empleado.getAp_materno().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido materno no puede estar vacío");
         }
         if (empleado.getUsuario() == null || empleado.getUsuario().trim().isEmpty()) {
             throw new IllegalArgumentException("El usuario no puede estar vacío");
