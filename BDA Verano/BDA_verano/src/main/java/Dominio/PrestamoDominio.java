@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author angel
+ * @author Angel Gabriel Beltran Duarte 244865
  */
 public class PrestamoDominio {
     

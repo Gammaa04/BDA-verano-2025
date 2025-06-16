@@ -1,7 +1,7 @@
 package Dominio;
 /**
  * En esta clase se hace el dominio de la entidad Abono 
- * @author angel
+ * @author Angel Gabriel Beltran Duarte 244865
  */
 import java.time.LocalDateTime;
 
