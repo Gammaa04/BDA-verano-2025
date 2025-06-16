@@ -5,7 +5,7 @@ package Dominio;
 */
 
 public class EmpleadoDominio {
-    private int iD;
+    private int id;
     private String nombre;
     private String apellidoPaterno; 
     private String apellidoMaterno;
@@ -13,8 +13,8 @@ public class EmpleadoDominio {
     private String contraseña;
     private String estaActivo;
 
-    public EmpleadoDominio(int iD, String nombre, String apellidoPaterno, String apellidoMaterno, String usuario, String contraseña, String estaActivo) {
-        this.iD = iD;
+    public EmpleadoDominio(int id, String nombre, String apellidoPaterno, String apellidoMaterno, String usuario, String contraseña, String estaActivo) {
+        this.id = id;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
@@ -23,12 +23,12 @@ public class EmpleadoDominio {
         this.estaActivo = estaActivo;
     }
 
-    public int getiD() {
-        return iD;
+    public int getid() {
+        return id;
     }
 
-    public void setiD(int iD) {
-        this.iD = iD;
+    public void setid(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -81,12 +81,7 @@ public class EmpleadoDominio {
 
     @Override
     public String toString() {
-        return "EmpleadoDominio{" + "iD=" + iD + ", nombre=" + nombre + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", usuario=" + usuario + ", contrase\u00f1a=" + contraseña + ", estaActivo=" + estaActivo + '}';
+        return "EmpleadoDominio{" + "id=" + id + ", nombre=" + nombre + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", usuario=" + usuario + ", contrase\u00f1a=" + contraseña + ", estaActivo=" + estaActivo + '}';
     }
     
-    
-
-
-    
-
 }
