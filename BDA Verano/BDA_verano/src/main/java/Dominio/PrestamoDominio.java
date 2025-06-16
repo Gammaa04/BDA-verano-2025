@@ -6,6 +6,12 @@ package Dominio;
  */
 import java.time.LocalDateTime;
 
+
+/**
+ *
+ * @author Angel Gabriel Beltran Duarte 244865
+ */
+
 public class PrestamoDominio {
     private int id;
     private EmpleadoDominio empleado;

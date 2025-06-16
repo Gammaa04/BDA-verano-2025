@@ -1,6 +1,6 @@
 package Dominio;
 /**
- * En esta clase se hace la entidad de dominio de EmpleadoDominio, simplemente se defininen las variables, el constructor por defecto
+ * En esta clase se hace la entidad de dominio de Empleado, simplemente se defininen las variables, el constructor por defecto
  * y el constructor, getters, setters y strings.
  * @author Angel Gabriel Beltran Duarte 244865
  */
