@@ -1,73 +1,53 @@
 package Dominio;
-
 /**
- * @author Angel
- * Esta clase es para definir la entidad empleado getters setter toString y el constructor
+ * En esta clase se hace la entidad de dominio de EmpleadoDominio, simplemente se defininen las variables, el constructor por defecto
+ * y el constructor, getters, setters y strings.
+ * @author Angel Gabriel Beltran Duarte 244865
  */
 public class EmpleadoDominio {
     private int id;
-    private String nombre;
-    private String apellidoPaterno;
-    private String apellidoMaterno;
+    private String nombreCompleto;
+    private EstadoEmpleado estado;
     private String usuario;
-    private String contraseña;
-    private boolean estaActivo; // ¡Cambiado de String a boolean!
+    private String contrasena;
+    private DepartamentoDominio departamento;
+    private TipoEmpleado tipo;
 
-
-    // --- Constructor por defecto 
     public EmpleadoDominio() {
     }
 
-    // --- Constructor 
-    public EmpleadoDominio(
-            int id,
-            String nombre,
-            String apellidoPaterno,
-            String apellidoMaterno,
-            String usuario,
-            String contraseña,
-            boolean estaActivo 
-    ) {
+    public EmpleadoDominio(int id, String nombreCompleto, EstadoEmpleado estado, String usuario, String contrasena, DepartamentoDominio departamento, TipoEmpleado tipo) {
         this.id = id;
-        this.nombre = nombre;
-        this.apellidoPaterno = apellidoPaterno;
-        this.apellidoMaterno = apellidoMaterno;
+        this.nombreCompleto = nombreCompleto;
+        this.estado = estado;
         this.usuario = usuario;
-        this.contraseña = contraseña;
-        this.estaActivo = estaActivo;
+        this.contrasena = contrasena;
+        this.departamento = departamento;
+        this.tipo = tipo;
     }
 
-    // Getters y setters
-    public int getId() { 
+    public int getId() {
         return id;
     }
 
-    public void setId(int id) { 
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
+    public EstadoEmpleado getEstado() {
+        return estado;
     }
 
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
-
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
+    public void setEstado(EstadoEmpleado estado) {
+        this.estado = estado;
     }
 
     public String getUsuario() {
@@ -78,27 +58,32 @@ public class EmpleadoDominio {
         this.usuario = usuario;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
-   
-    public boolean isEstaActivo() { // ¡Cambiado a boolean y "is" como convención!
-        return estaActivo;
+    public DepartamentoDominio getDepartamento() {
+        return departamento;
     }
 
-    
-    public void setEstaActivo(boolean estaActivo) { // ¡Cambiado a boolean!
-        this.estaActivo = estaActivo;
+    public void setDepartamento(DepartamentoDominio departamento) {
+        this.departamento = departamento;
     }
 
-    
+    public TipoEmpleado getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoEmpleado tipo) {
+        this.tipo = tipo;
+    }
+
     @Override
     public String toString() {
-        return "EmpleadoDominio{" + "id=" + id + ", nombre=" + nombre + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", usuario=" + usuario + ", contrase\u00f1a=" + contraseña + ", estaActivo=" + estaActivo + '}';
+        return "EmpleadoDominio{" + "id=" + id + ", nombreCompleto=" + nombreCompleto + ", estado=" + estado + ", usuario=" + usuario + ", contrasena=" + contrasena + ", departamento=" + departamento + ", tipo=" + tipo + "}";
     }
 }

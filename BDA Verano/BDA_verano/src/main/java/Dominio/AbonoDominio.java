@@ -1,7 +1,8 @@
 package Dominio;
 /**
- * En esta clase se hace el dominio de la entidad Abono 
- * @author angel
+ * En esta clase se hace la entidad de dominio de Abono, simplemente se defininen las variables, el constructor por defecto
+ * y el constructor, getters, setters y strings.
+ * @author Angel Gabriel Beltran Duarte 
  */
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ public class AbonoDominio {
     private PrestamoDominio prestamo;
     private double monto;
     private LocalDateTime fechaHora;
-   /* private JefeDominio jefeAutoriza;
+    private JefeDominio jefeAutoriza;
 
     public AbonoDominio() {
     }
@@ -66,5 +67,5 @@ public class AbonoDominio {
     @Override
     public String toString() {
         return "AbonoDominio{" + "id=" + id + ", prestamo=" + prestamo + ", monto=" + monto + ", fechaHora=" + fechaHora + ", jefeAutoriza=" + jefeAutoriza + "}";
-    }*/
+    }
 }
