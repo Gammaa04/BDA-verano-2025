@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import Persistencia.IConexionBD;
+import Persistencia.PersistenciaException;
 
 public class PrestamoServicio implements IPrestamoServicio {
     private final PrestamoDAO prestamoDAO;
@@ -33,18 +34,26 @@ public class PrestamoServicio implements IPrestamoServicio {
     }
 
     @Override
-    public PrestamoDTO solicitarPrestamo(PrestamoDTO prestamo) throws SQLException {
+    public PrestamoDTO solicitarPrestamo(PrestamoDTO prestamo) throws PersistenciaException {
         validarSolicitudPrestamo(prestamo);
         try (Connection conn = conexionBD.crearConexion()) {
             conn.setAutoCommit(false);
             try {
-                EmpleadoDominio empleado = empleadoDAO.obtenerEmpleadoPorId(prestamo.getEmpleadoId());
+                EmpleadoDominio empleado = empleadoDAO.buscarID(prestamo.getEmpleadoId());
                 if (empleado == null) {
                     throw new IllegalArgumentException("El empleado no existe");
                 }
                 PrestamoDominio dominio = new PrestamoDominio(
                     0, // ID se genera en la BD
-                    new EmpleadoDominio(prestamo.getEmpleadoId(), null, null, null, null, null, null),
+                    new EmpleadoDominio(empleado.getId(),
+                                        empleado.getNombre(),
+                                        empleado.getAp_paterno(),
+                                        empleado.getAp_materno(),
+                                        empleado.getEstado(),
+                                        empleado.getUsuario(),
+                                        empleado.getContrasena(),
+                                        empleado.getDepartamento(),
+                                        empleado.getTipo()),
                     new DepartamentoDominio(prestamo.getDepartamentoId(), null),
                     new TipoPrestamoDominio(prestamo.getTipoPrestamoId(), null, 0),
                     prestamo.getMonto(),
@@ -60,11 +69,14 @@ public class PrestamoServicio implements IPrestamoServicio {
                 conn.rollback();
                 throw new SQLException("Error al solicitar el préstamo: " + e.getMessage(), e);
             }
+        }catch(SQLException e){
+            
+            throw new PersistenciaException("Error al solicitar el préstamo");
         }
     }
 
     @Override
-    public PrestamoDTO autorizarPrestamo(int id, int idJefeAutoriza, boolean autorizado) throws SQLException {
+    public PrestamoDTO autorizarPrestamo(int id, int idJefeAutoriza, boolean autorizado) throws PersistenciaException {
         if (id <= 0 || idJefeAutoriza <= 0) {
             throw new IllegalArgumentException("IDs inválidos");
         }
@@ -78,6 +90,13 @@ public class PrestamoServicio implements IPrestamoServicio {
                 if (prestamo.getEstatus() != EstatusPrestamo.CREADO) {
                     throw new IllegalArgumentException("El préstamo no está en estado CREADO");
                 }
+                
+                /**
+                 * ESTA LINEA ES LA CAUSANTE DE QUE ESTO NO ESTE FUNCIONANDO
+                 * DILEMA: EL JEFE DEBERIA TENER SU DAO PROPIO POR SU DOMINIO
+                 * O DOMINIO JEFE DEBERIA SER UNA EXTENSION DE EMPLEADO Y QUE JALE
+                 * CON EMPLEADODAO
+                 */
                 JefeDominio jefe = jefeDAO.obtenerJefePorId(idJefeAutoriza);
                 if (jefe == null) {
                     throw new IllegalArgumentException("El jefe no existe");
@@ -93,7 +112,9 @@ public class PrestamoServicio implements IPrestamoServicio {
                 conn.rollback();
                 throw new SQLException("Error al autorizar el préstamo: " + e.getMessage(), e);
             }
-        }
+        }catch(SQLException e){
+                throw new PersistenciaException("");
+            }
     }
 
     @Override
@@ -109,13 +130,17 @@ public class PrestamoServicio implements IPrestamoServicio {
     }
 
     @Override
-    public List<PrestamoDTO> obtenerPrestamosPorEmpleado(int idEmpleado) throws SQLException {
-        if (idEmpleado <= 0) {
-            throw new IllegalArgumentException("El ID del empleado debe ser mayor a cero");
+    public List<PrestamoDTO> obtenerPrestamosPorEmpleado(int idEmpleado) throws PersistenciaException {
+        try {
+            if (idEmpleado <= 0) {
+                throw new IllegalArgumentException("El ID del empleado debe ser mayor a cero");
+            }
+            return prestamoDAO.obtenerPrestamosPorEmpleado(idEmpleado).stream()
+                    .map(this::mapToDTO)
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+           throw new PersistenciaException("");
         }
-        return prestamoDAO.obtenerPrestamosPorEmpleado(idEmpleado).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
     }
 
     private void validarSolicitudPrestamo(PrestamoDTO prestamo) {
@@ -137,7 +162,7 @@ public class PrestamoServicio implements IPrestamoServicio {
     }
 
     private void registrarHistorialEstatus(Connection conn, PrestamoDominio prestamo, 
-                                          EstatusPrestamo estatusAnterior, EstatusPrestamo estatusNuevo) throws SQLException {
+                                          EstatusPrestamo estatusAnterior, EstatusPrestamo estatusNuevo) throws PersistenciaException {
         HistorialEstatusPrestamoDominio historial = new HistorialEstatusPrestamoDominio(
             0, // ID se genera en la BD
             new PrestamoDominio(prestamo.getId(), null, null, null, 0, null, null, null),
