@@ -19,7 +19,7 @@ public class HistorialEstatusPrestamo implements IHistorialEstatusPrestamoDAO {
     }
 
     @Override
-    public HistorialEstatusPrestamoDominio crearHistorialEstatus(HistorialEstatusPrestamoDominio historial) throws SQLException {
+    public HistorialEstatusPrestamoDominio crearHistorialEstatus(HistorialEstatusPrestamoDominio historial) throws PersistenciaException {
         String query = """
                      INSERT INTO Historial_Estatus_Prestamos (id_prestamo, estatus_anterior, estatus_nuevo, fecha_hora)
                      VALUES (?, ?, ?, ?)
@@ -37,11 +37,13 @@ public class HistorialEstatusPrestamo implements IHistorialEstatusPrestamoDAO {
                 }
             }
             return historial;
+        }catch(SQLException e){
+            throw new PersistenciaException("");
         }
     }
 
     @Override
-    public List<HistorialEstatusPrestamoDominio> obtenerHistorialPorPrestamo(int idPrestamo) throws SQLException {
+    public List<HistorialEstatusPrestamoDominio> obtenerHistorialPorPrestamo(int idPrestamo) throws PersistenciaException {
         List<HistorialEstatusPrestamoDominio> historial = new ArrayList<>();
         String query = """
                      SELECT id_historial,
@@ -63,8 +65,10 @@ public class HistorialEstatusPrestamo implements IHistorialEstatusPrestamoDAO {
                         rs.getObject("fecha_hora", LocalDateTime.class)
                     ));
                 }
-            }
+            }return historial;
+        }catch(SQLException e){
+            throw new PersistenciaException("");
         }
-        return historial;
+        
     }
 }

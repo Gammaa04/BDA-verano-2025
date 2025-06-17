@@ -8,9 +8,9 @@ package Negocio;
  *
  * @author joel_
  */
-public class ServicioException extends Exception{
+public class NegocioException extends Exception{
 
-    public ServicioException(String message) {
+    public NegocioException(String message) {
         super(message);
     }
     
