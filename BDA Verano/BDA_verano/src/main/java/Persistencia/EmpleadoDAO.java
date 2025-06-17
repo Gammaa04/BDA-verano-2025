@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -206,13 +207,12 @@ public class EmpleadoDAO implements IEmpleadoDAO {
             }
 
             Connection connection = this.conexion.crearConexion();
+
             String query = """
                        SELECT id_empleado FROM Jefes;
                        """;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
-
-            List<EmpleadoDTO> Jefes = new LinkedList<>();
 
             boolean isEncontrado = false;
             while (resultSet.next()) {
@@ -225,7 +225,8 @@ public class EmpleadoDAO implements IEmpleadoDAO {
             if (!isEncontrado) {
                 throw new PersistenciaException("tu id no tiene los poderes");
             }
-         
+            connection.setAutoCommit(false);
+
             String query2 = """
                        INSERT INTO empleados(
                            nombre,
@@ -247,34 +248,48 @@ public class EmpleadoDAO implements IEmpleadoDAO {
                            ?
                        );
                        """;
-            PreparedStatement preparedStatement2 = connection.prepareStatement(query2);
-            preparedStatement.setString(1, empleado.getNombre());
-            preparedStatement.setString(2, empleado.getAp_paterno());
-            preparedStatement.setString(3, empleado.getAp_materno());
+            PreparedStatement preparedStatement2 = connection.prepareStatement(query2, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement2.setString(1, empleado.getNombre());
+            preparedStatement2.setString(2, empleado.getAp_paterno());
+            preparedStatement2.setString(3, empleado.getAp_materno());
 
             if (empleado.getEstado().equals(EstadoEmpleado.ACTIVO)) {
-                preparedStatement.setString(4, "ACTIVO");
+                preparedStatement2.setString(4, "ACTIVO");
             } else {
-                preparedStatement.setString(4, "INACTIVO");
+                preparedStatement2.setString(4, "INACTIVO");
             }
 
-            preparedStatement.setString(5, empleado.getUsuario());
-            preparedStatement.setString(6, empleado.getContrasena());
-            preparedStatement.setInt(7, empleado.getDepartamento().getId());
-
-            preparedStatement2.executeQuery();
+            preparedStatement2.setString(5, empleado.getUsuario());
+            preparedStatement2.setString(6, empleado.getContrasena());
+            preparedStatement2.setInt(7, empleado.getDepartamento().getId());
+            preparedStatement2.setString(8, "Subordinado");
             
+            
+            int filasAfectadas;
+
+            try {
+                filasAfectadas = preparedStatement2.executeUpdate();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new PersistenciaException(e.getMessage());
+            }
+
+            if (filasAfectadas == 0) {
+                throw new PersistenciaException("El empleado no ha sido creado");
+            }
+
             String query3 = """
                        SELECT last_insert_id();
                        """;
+
             PreparedStatement preparedStatement3 = connection.prepareStatement(query3);
-            ResultSet resultSet3 = preparedStatement.executeQuery();
-            
+            ResultSet resultSet3 = preparedStatement3.executeQuery();
+
             return buscarID(resultSet3.getInt(1));
 
-
-        } catch (Exception e) {
+        } catch (PersistenciaException | SQLException e) {
             throw new PersistenciaException(e.getMessage());
+
         }
 
     }
