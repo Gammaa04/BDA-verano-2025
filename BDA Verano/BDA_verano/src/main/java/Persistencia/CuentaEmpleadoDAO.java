@@ -68,6 +68,7 @@ public class CuentaEmpleadoDAO implements ICuentaEmpleadoDAO {
         """;
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            conn.setAutoCommit(false); // 🔴 Inicia la transacción
             stmt.setString(1, cuenta.getClabe());
             stmt.setString(2, cuenta.getBanco());
             stmt.setString(3, cuenta.getEstado().name());
@@ -75,8 +76,10 @@ public class CuentaEmpleadoDAO implements ICuentaEmpleadoDAO {
 
             int rows = stmt.executeUpdate();
             if (rows == 0) {
+                conn.rollback();
                 throw new PersistenciaException("No se encontró la cuenta con ID " + cuenta.getId());
             }
+            conn.commit(); // ✅ Confirma la transacción
             return cuenta;
 
         } catch (SQLException e) {
@@ -92,6 +95,7 @@ public class CuentaEmpleadoDAO implements ICuentaEmpleadoDAO {
         """;
         try (Connection conn = conexionBD.crearConexion(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            conn.setAutoCommit(false); // 🔴 Inicia la transacción
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -101,16 +105,29 @@ public class CuentaEmpleadoDAO implements ICuentaEmpleadoDAO {
 
                     CuentaEmpleadoDominio cuentaEmpleadoDominio;
 
-                    cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
-                            rs.getInt("id_cuenta"),
-                            empleadoDTO,
-                            rs.getString("CLABE"),
-                            rs.getString("banco"),
-                            EstadoCuenta.valueOf(rs.getString("estado"))
-                    );
+                    if (rs.getString("estado").equalsIgnoreCase("Activa")) {
+                        cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
+                                rs.getInt("id_cuenta"),
+                                empleadoDTO,
+                                rs.getString("CLABE"),
+                                rs.getString("banco"),
+                                EstadoCuenta.ACTIVA
+                        );
+
+                    } else {
+                        cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
+                                rs.getInt("id_cuenta"),
+                                empleadoDTO,
+                                rs.getString("CLABE"),
+                                rs.getString("banco"),
+                                EstadoCuenta.INACTIVA
+                        );
+                    }
+                    conn.commit(); // ✅ Confirma la transacción
                     return cuentaEmpleadoDominio;
 
                 } else {
+                    conn.rollback();
                     throw new PersistenciaException("No se encontró la cuenta con ID " + id);
                 }
             }
@@ -137,12 +154,24 @@ public class CuentaEmpleadoDAO implements ICuentaEmpleadoDAO {
 
                     CuentaEmpleadoDominio cuentaEmpleadoDominio;
 
-                    cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
-                            rs.getInt("id_cuenta"),
-                            empleadoDTO,
-                            rs.getString("CLABE"),
-                            rs.getString("banco"),
-                            EstadoCuenta.valueOf(rs.getString("estado")));
+                    if (rs.getString("estado").equalsIgnoreCase("Activa")) {
+                        cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
+                                rs.getInt("id_cuenta"),
+                                empleadoDTO,
+                                rs.getString("CLABE"),
+                                rs.getString("banco"),
+                                EstadoCuenta.ACTIVA
+                        );
+
+                    } else {
+                        cuentaEmpleadoDominio = new CuentaEmpleadoDominio(
+                                rs.getInt("id_cuenta"),
+                                empleadoDTO,
+                                rs.getString("CLABE"),
+                                rs.getString("banco"),
+                                EstadoCuenta.INACTIVA
+                        );
+                    }
 
                     cuentas.add(cuentaEmpleadoDominio);
 

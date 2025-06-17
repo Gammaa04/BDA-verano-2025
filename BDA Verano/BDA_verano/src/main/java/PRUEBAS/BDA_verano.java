@@ -44,7 +44,7 @@ public class BDA_verano {
                     TipoEmpleado.SUBORDINADO
             );
             // Crear una cuenta para el empleado
-            CuentaEmpleadoDominio nuevaCuenta = new CuentaEmpleadoDominio(0, empleado, "123456789012345678", "Banco XYZ", EstadoCuenta.ACTIVA);
+            CuentaEmpleadoDominio nuevaCuenta = new CuentaEmpleadoDominio(0, empleado, "42123124", "Banco XYZ", EstadoCuenta.ACTIVA);
             CuentaEmpleadoDominio cuentaCreada = cuentaDAO.crearCuentaEmpleado(nuevaCuenta);
             System.out.println("Cuenta creada exitosamente: " + cuentaCreada);
 
