@@ -57,6 +57,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
             String usuario = resultSet.getString("usuario");
             String contraseña = resultSet.getString("contraseña");
             int id_depa = resultSet.getInt("id_departamento");
+            String tipo = resultSet.getString("tipo");
 
             resultSet.close();
             preparedStatement.close();
@@ -84,16 +85,30 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 
             DepartamentoDominio departamentoDominio = new DepartamentoDominio(id_depa, nombreDepa);
 
-            EmpleadoDominio empleado = new EmpleadoDominio(
-                    id2,
-                    nombre,
-                    apellidoPaterno,
-                    apellidoMaterno,
-                    EstadoEmpleado.ACTIVO,
-                    usuario,
-                    contraseña,
-                    departamentoDominio,
-                    TipoEmpleado.JEFE);
+            EmpleadoDominio empleado = null;
+            if (tipo.equalsIgnoreCase("Jefe")) {
+                empleado = new EmpleadoDominio(
+                        id2,
+                        nombre,
+                        apellidoPaterno,
+                        apellidoMaterno,
+                        EstadoEmpleado.ACTIVO,
+                        usuario,
+                        contraseña,
+                        departamentoDominio,
+                        TipoEmpleado.JEFE);
+            } else {
+                empleado = new EmpleadoDominio(
+                        id2,
+                        nombre,
+                        apellidoPaterno,
+                        apellidoMaterno,
+                        EstadoEmpleado.ACTIVO,
+                        usuario,
+                        contraseña,
+                        departamentoDominio,
+                        TipoEmpleado.SUBORDINADO);
+            }
 
             return empleado;
 
@@ -262,9 +277,9 @@ public class EmpleadoDAO implements IEmpleadoDAO {
             preparedStatement2.setString(5, empleado.getUsuario());
             preparedStatement2.setString(6, empleado.getContrasena());
             preparedStatement2.setInt(7, empleado.getDepartamento().getId());
+
             preparedStatement2.setString(8, "Subordinado");
-            
-            
+
             int filasAfectadas;
 
             try {
@@ -278,14 +293,19 @@ public class EmpleadoDAO implements IEmpleadoDAO {
                 throw new PersistenciaException("El empleado no ha sido creado");
             }
 
-            String query3 = """
-                       SELECT last_insert_id();
-                       """;
+            ResultSet resultSet2;
 
-            PreparedStatement preparedStatement3 = connection.prepareStatement(query3);
-            ResultSet resultSet3 = preparedStatement3.executeQuery();
+            resultSet2 = preparedStatement2.getGeneratedKeys();
+            int nuevoIdEmpleado = -1;
+            if (resultSet2.next()) {
+                nuevoIdEmpleado = resultSet2.getInt(1);
+            } else {
+                connection.rollback();
+                throw new PersistenciaException("No se pudo obtener el ID del empleado creado.");
+            }
 
-            return buscarID(resultSet3.getInt(1));
+            connection.commit(); // ✅ Confirmar transacción antes de buscar el empleado
+            return buscarID(nuevoIdEmpleado);
 
         } catch (PersistenciaException | SQLException e) {
             throw new PersistenciaException(e.getMessage());
