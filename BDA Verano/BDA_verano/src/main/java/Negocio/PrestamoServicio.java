@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import Persistencia.IConexionBD;
 
-public class PrestamoServicio implements IPrestamoServicio {
+public class PrestamoServicio  {
     private final PrestamoDAO prestamoDAO;
     private final IHistorialEstatusPrestamoDAO historialDAO;
     private final IEmpleadoDAO empleadoDAO;
@@ -32,7 +32,7 @@ public class PrestamoServicio implements IPrestamoServicio {
         this.conexionBD = conexionBD;
     }
 
-    @Override
+  /* @Override
     public PrestamoDTO solicitarPrestamo(PrestamoDTO prestamo) throws SQLException {
         validarSolicitudPrestamo(prestamo);
         try (Connection conn = conexionBD.crearConexion()) {
@@ -42,9 +42,9 @@ public class PrestamoServicio implements IPrestamoServicio {
                 if (empleado == null) {
                     throw new IllegalArgumentException("El empleado no existe");
                 }
-                PrestamoDominio dominio = new PrestamoDominio(
+               /* PrestamoDominio dominio = new PrestamoDominio(
                     0, // ID se genera en la BD
-                    new EmpleadoDominio(prestamo.getEmpleadoId(), null, null, null, null, null, null),
+                  new EmpleadoDominio(prestamo.getEmpleadoId(), null, null, null, null, null, null),
                     new DepartamentoDominio(prestamo.getDepartamentoId(), null),
                     new TipoPrestamoDominio(prestamo.getTipoPrestamoId(), null, 0),
                     prestamo.getMonto(),
@@ -159,5 +159,5 @@ public class PrestamoServicio implements IPrestamoServicio {
             dominio.getEstatus(),
             dominio.getJefeAutoriza() != null ? dominio.getJefeAutoriza().getId() : 0
         );
-    }
+    }*/
 }
