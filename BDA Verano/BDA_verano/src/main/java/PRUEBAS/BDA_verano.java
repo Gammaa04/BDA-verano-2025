@@ -4,16 +4,21 @@
 package PRUEBAS;
 
 import DTO.EmpleadoDTO;
+import Dominio.CuentaEmpleadoDominio;
 import Dominio.DepartamentoDominio;
 import Dominio.EmpleadoDominio;
+import Dominio.EstadoCuenta;
 import Dominio.EstadoEmpleado;
 import Dominio.TipoEmpleado;
 import Persistencia.ConexionBD;
+import Persistencia.CuentaEmpleadoDAO;
 import Persistencia.EmpleadoDAO;
 import Persistencia.IConexionBD;
+import Persistencia.ICuentaEmpleadoDAO;
 import Persistencia.IEmpleadoDAO;
 import Persistencia.PersistenciaException;
 import java.sql.Connection;
+import java.util.List;
 
 /**
  *
@@ -22,58 +27,49 @@ import java.sql.Connection;
 public class BDA_verano {
 
     public static void main(String[] args) {
-
         try {
-            // Instancia la conexión a la base de datos
-            IConexionBD conexion = new ConexionBD(); // Asegúrate de que esto está bien configurado
-            IEmpleadoDAO empleadoDAO = new EmpleadoDAO(conexion);
+            // Inicializar la conexión a la base de datos
+            IConexionBD conexionBD = new ConexionBD(); // Asegúrate de que esto está bien configurado
+            ICuentaEmpleadoDAO cuentaDAO = new CuentaEmpleadoDAO(conexionBD);
 
-            EmpleadoDominio empleadoDominio = empleadoDAO.buscarID(3);
-            System.out.println("Empleado Encontrado " + empleadoDominio);
-            System.out.println("ID empleado: " + empleadoDominio.getId());
-            System.out.println("nombre: " + empleadoDominio.getNombre());
-            System.out.println("ap_paterno: " + empleadoDominio.getAp_paterno());
-            System.out.println("ap_materno: " + empleadoDominio.getAp_materno());
-            System.out.println("estado: " + empleadoDominio.getEstado());
-            System.out.println("usuario: " + empleadoDominio.getUsuario());
-            System.out.println("Contraseña: " + empleadoDominio.getContrasena());
-            System.out.println("id_departamento: " + empleadoDominio.getDepartamento().getId());
-            System.out.println("tipo: " + empleadoDominio.getTipo());
-
-            System.out.println("------------------------------------------------");
-            EmpleadoDominio nuevoEmpleado = new EmpleadoDominio(
-                    0, // Se asignará automáticamente el ID
+            // Crear un empleado de prueba
+        EmpleadoDTO empleado = new EmpleadoDTO(
+                    21, // Se asignará automáticamente el ID
                     "Jorge",
                     "Nitales",
                     "Gozo",
                     EstadoEmpleado.ACTIVO,
-                    "pito",
                     "crotolamo",
-                    new DepartamentoDominio(1, "Recursos Humanos"), // ID y nombre del departamento
+                    1, // ID y nombre del departamento
                     TipoEmpleado.SUBORDINADO
             );
-            
-            System.out.println(nuevoEmpleado);
-            
+            // Crear una cuenta para el empleado
+            CuentaEmpleadoDominio nuevaCuenta = new CuentaEmpleadoDominio(0, empleado, "123456789012345678", "Banco XYZ", EstadoCuenta.ACTIVA);
+            CuentaEmpleadoDominio cuentaCreada = cuentaDAO.crearCuentaEmpleado(nuevaCuenta);
+            System.out.println("Cuenta creada exitosamente: " + cuentaCreada);
 
-            EmpleadoDominio ed = empleadoDAO.crearEmpleado(nuevoEmpleado, 2);
+            // Actualizar la cuenta con nuevos datos
+            cuentaCreada.setBanco("Banco ABC");
+            cuentaCreada.setEstado(EstadoCuenta.INACTIVA);
+            CuentaEmpleadoDominio cuentaActualizada = cuentaDAO.actualizarCuentaEmpleado(cuentaCreada);
+            System.out.println("Cuenta actualizada exitosamente: " + cuentaActualizada);
 
-            System.out.println("Empleado Creado " + ed);
-            System.out.println("ID empleado: " + ed.getId());
-            System.out.println("nombre: " + ed.getNombre());
-            System.out.println("ap_paterno: " + ed.getAp_paterno());
-            System.out.println("ap_materno: " + ed.getAp_materno());
-            System.out.println("estado: " + ed.getEstado());
-            System.out.println("usuario: " + ed.getUsuario());
-            System.out.println("Contraseña: " + ed.getContrasena());
-            System.out.println("id_departamento: " + ed.getDepartamento().getId());
-            System.out.println("tipo: " + ed.getTipo());
+            // Obtener cuenta por ID
+            CuentaEmpleadoDominio cuentaPorId = cuentaDAO.obtenerCuentaEmpleadoPorId(cuentaCreada.getId());
+            System.out.println("Cuenta obtenida por ID: " + cuentaPorId);
+
+            // Obtener todas las cuentas de un empleado
+            List<CuentaEmpleadoDominio> cuentasPorEmpleado = cuentaDAO.obtenerCuentasPorEmpleado(empleado.getId());
+            System.out.println("Cuentas del empleado " + empleado.getNombre() + ":");
+            for (CuentaEmpleadoDominio cuenta : cuentasPorEmpleado) {
+                System.out.println(cuenta);
+            }
 
         } catch (PersistenciaException e) {
-
-            System.err.println("FALLO EN MAIN : " + e.getMessage());
-
+            System.out.println("Error: " + e.getMessage());
         }
-
     }
 }
+
+
+

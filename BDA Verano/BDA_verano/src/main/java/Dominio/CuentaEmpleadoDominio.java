@@ -1,5 +1,7 @@
 package Dominio;
 
+import DTO.EmpleadoDTO;
+
 /**
  * Representa la entidad de dominio para una Cuenta Bancaria Personal de un Empleado.
  * Esta clase encapsula la información de una cuenta bancaria asociada a un empleado,
@@ -20,7 +22,7 @@ public class CuentaEmpleadoDominio {
     /**
      * El objeto EmpleadoDominio al que pertenece esta cuenta bancaria.
      */
-    private EmpleadoDominio empleado;
+    private EmpleadoDTO empleado;
 
     /**
      * La Clave Bancaria Estandarizada (CLABE) de la cuenta bancaria personal.
@@ -55,7 +57,7 @@ public class CuentaEmpleadoDominio {
      * @param banco El nombre del banco.
      * @param estado El estado inicial de la cuenta (activa/inactiva).
      */
-    public CuentaEmpleadoDominio(int id, EmpleadoDominio empleado, String clabe, String banco, EstadoCuenta estado) {
+    public CuentaEmpleadoDominio(int id, EmpleadoDTO empleado, String clabe, String banco, EstadoCuenta estado) {
         this.id = id;
         this.empleado = empleado;
         this.clabe = clabe;
@@ -86,7 +88,7 @@ public class CuentaEmpleadoDominio {
      *
      * @return El empleado asociado a la cuenta.
      */
-    public EmpleadoDominio getEmpleado() {
+    public EmpleadoDTO getEmpleado() {
         return empleado;
     }
 
@@ -95,7 +97,7 @@ public class CuentaEmpleadoDominio {
      *
      * @param empleado El nuevo empleado asociado a la cuenta.
      */
-    public void setEmpleado(EmpleadoDominio empleado) {
+    public void setEmpleado(EmpleadoDTO empleado) {
         this.empleado = empleado;
     }
 
