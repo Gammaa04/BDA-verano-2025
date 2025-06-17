@@ -3,8 +3,11 @@ package Negocio;
 import DTO.DepartamentoDTO;
 import Dominio.DepartamentoDominio;
 import Persistencia.DepartamentoDAO;
+import Persistencia.PersistenciaException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class DepartamentoServicio implements IDepartamentoServicio {
@@ -15,30 +18,42 @@ public class DepartamentoServicio implements IDepartamentoServicio {
     }
 
     @Override
-    public DepartamentoDTO actualizarDepartamento(DepartamentoDTO departamento) throws SQLException {
+    public DepartamentoDTO actualizarDepartamento(DepartamentoDTO departamento) throws PersistenciaException {
         validarDepartamento(departamento);
         DepartamentoDominio dominio = new DepartamentoDominio(departamento.getId(), departamento.getNombre());
-        dominio = departamentoDAO.actualizarDepartamento(dominio);
-        return new DepartamentoDTO(dominio.getId(), dominio.getNombre());
+        try {
+            dominio = departamentoDAO.actualizarDepartamento(dominio);
+            return new DepartamentoDTO(dominio.getId(), dominio.getNombre());
+        } catch (SQLException ex) {
+            throw new PersistenciaException("");
+        }    
     }
 
     @Override
-    public DepartamentoDTO obtenerDepartamentoPorId(int id) throws SQLException {
+    public DepartamentoDTO obtenerDepartamentoPorId(int id) throws PersistenciaException {
         if (id <= 0) {
             throw new IllegalArgumentException("El ID debe ser mayor a cero");
         }
-        DepartamentoDominio dominio = departamentoDAO.obtenerDepartamentoPorId(id);
-        if (dominio == null) {
-            throw new IllegalArgumentException("No se encontró un departamento con ID " + id);
+        DepartamentoDominio dominio;
+        try {
+            dominio = departamentoDAO.obtenerDepartamentoPorId(id);
+            return new DepartamentoDTO(dominio.getId(), dominio.getNombre());
+        } catch (SQLException ex) {
+            throw new PersistenciaException("");
         }
-        return new DepartamentoDTO(dominio.getId(), dominio.getNombre());
+        
+        
     }
 
     @Override
-    public List<DepartamentoDTO> obtenerTodosLosDepartamentos() throws SQLException {
-        return departamentoDAO.obtenerTodosLosDepartamentos().stream()
-                .map(d -> new DepartamentoDTO(d.getId(), d.getNombre()))
-                .collect(Collectors.toList());
+    public List<DepartamentoDTO> obtenerTodosLosDepartamentos() throws PersistenciaException {
+        try {
+            return departamentoDAO.obtenerTodosLosDepartamentos().stream()
+                    .map(d -> new DepartamentoDTO(d.getId(), d.getNombre()))
+                    .collect(Collectors.toList());
+        } catch (SQLException ex) {
+            throw new PersistenciaException("");
+        }
     }
 
     private void validarDepartamento(DepartamentoDTO departamento) {
