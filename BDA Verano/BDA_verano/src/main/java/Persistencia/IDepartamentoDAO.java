@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IDepartamentoDAO {
-    DepartamentoDominio actualizarDepartamento(DepartamentoDominio departamento) throws SQLException;
-    DepartamentoDominio obtenerDepartamentoPorId(int id) throws SQLException;
-    List<DepartamentoDominio> obtenerTodosLosDepartamentos() throws SQLException;
+    DepartamentoDominio actualizarDepartamento(DepartamentoDominio departamento) throws PersistenciaException;
+    DepartamentoDominio obtenerDepartamentoPorId(int id) throws PersistenciaException;
+    List<DepartamentoDominio> obtenerTodosLosDepartamentos() throws PersistenciaException;
 }

@@ -4,21 +4,42 @@
 package PRUEBAS;
 
 import DTO.EmpleadoDTO;
+import Dominio.AbonoDominio;
+import Dominio.CuentaDepartamentoDominio;
 import Dominio.CuentaEmpleadoDominio;
 import Dominio.DepartamentoDominio;
 import Dominio.EmpleadoDominio;
 import Dominio.EstadoCuenta;
 import Dominio.EstadoEmpleado;
+import Dominio.EstatusPrestamo;
+import Dominio.HistorialEstatusPrestamoDominio;
+import Dominio.JefeDominio;
+import Dominio.PrestamoDominio;
 import Dominio.TipoEmpleado;
+import Dominio.TipoPrestamoDominio;
+import Persistencia.AbonoDAO;
 import Persistencia.ConexionBD;
+import Persistencia.CuentaDepartamentoDAO;
 import Persistencia.CuentaEmpleadoDAO;
+import Persistencia.DepartamentoDAO;
 import Persistencia.EmpleadoDAO;
+import Persistencia.HistorialEstatusPrestamoDAO;
+import Persistencia.IAbonoDAO;
 import Persistencia.IConexionBD;
+import Persistencia.ICuentaDepartamentoDAO;
 import Persistencia.ICuentaEmpleadoDAO;
+import Persistencia.IDepartamentoDAO;
 import Persistencia.IEmpleadoDAO;
+import Persistencia.IHistorialEstatusPrestamoDAO;
+import Persistencia.IPrestamoDAO;
+import Persistencia.ITipoPrestamoDAO;
 import Persistencia.PersistenciaException;
+import Persistencia.PrestamoDAO;
+import Persistencia.TipoPrestamoDAO;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.List;
+import javax.crypto.AEADBadTagException;
 
 /**
  *
@@ -26,50 +47,48 @@ import java.util.List;
  */
 public class BDA_verano {
 
+    
     public static void main(String[] args) {
         try {
-            // Inicializar la conexión a la base de datos
-            IConexionBD conexionBD = new ConexionBD(); // Asegúrate de que esto está bien configurado
-            ICuentaEmpleadoDAO cuentaDAO = new CuentaEmpleadoDAO(conexionBD);
+            // ✅ Inicializar la conexión a la base de datos
+            IConexionBD conexionBD = new ConexionBD(); // Verifica que esté bien configurado
+            ITipoPrestamoDAO tipoPrestamoDAO = new TipoPrestamoDAO(conexionBD);
 
-            // Crear un empleado de prueba
-        EmpleadoDTO empleado = new EmpleadoDTO(
-                    21, // Se asignará automáticamente el ID
-                    "Jorge",
-                    "Nitales",
-                    "Gozo",
-                    EstadoEmpleado.ACTIVO,
-                    "crotolamo",
-                    1, // ID y nombre del departamento
-                    TipoEmpleado.SUBORDINADO
+            // ✅ Crear un nuevo tipo de préstamo
+            TipoPrestamoDominio nuevoTipo = new TipoPrestamoDominio(
+                0, // Se asignará automáticamente el ID
+                "Hipotecario",
+                360
             );
-            // Crear una cuenta para el empleado
-            CuentaEmpleadoDominio nuevaCuenta = new CuentaEmpleadoDominio(0, empleado, "42123124", "Banco XYZ", EstadoCuenta.ACTIVA);
-            CuentaEmpleadoDominio cuentaCreada = cuentaDAO.crearCuentaEmpleado(nuevaCuenta);
-            System.out.println("Cuenta creada exitosamente: " + cuentaCreada);
 
-            // Actualizar la cuenta con nuevos datos
-            cuentaCreada.setBanco("Banco ABC");
-            cuentaCreada.setEstado(EstadoCuenta.INACTIVA);
-            CuentaEmpleadoDominio cuentaActualizada = cuentaDAO.actualizarCuentaEmpleado(cuentaCreada);
-            System.out.println("Cuenta actualizada exitosamente: " + cuentaActualizada);
+            TipoPrestamoDominio tipoCreado = tipoPrestamoDAO.crearTipoPrestamo(nuevoTipo);
+            System.out.println("✅ Tipo de préstamo creado exitosamente: " + tipoCreado);
 
-            // Obtener cuenta por ID
-            CuentaEmpleadoDominio cuentaPorId = cuentaDAO.obtenerCuentaEmpleadoPorId(cuentaCreada.getId());
-            System.out.println("Cuenta obtenida por ID: " + cuentaPorId);
+            // ✅ Obtener un tipo de préstamo por ID
+            int idTipo = tipoCreado.getId();
+            TipoPrestamoDominio tipoPorId = tipoPrestamoDAO.obtenerTipoPrestamoPorId(idTipo);
+            if (tipoPorId != null) {
+                System.out.println("📌 Tipo de préstamo obtenido por ID: " + tipoPorId);
+            } else {
+                System.out.println("❌ No se encontró el tipo de préstamo con ID " + idTipo);
+            }
 
-            // Obtener todas las cuentas de un empleado
-            List<CuentaEmpleadoDominio> cuentasPorEmpleado = cuentaDAO.obtenerCuentasPorEmpleado(empleado.getId());
-            System.out.println("Cuentas del empleado " + empleado.getNombre() + ":");
-            for (CuentaEmpleadoDominio cuenta : cuentasPorEmpleado) {
-                System.out.println(cuenta);
+            // ✅ Actualizar un tipo de préstamo
+            tipoPorId.setNombre("Hipotecario Premium");
+            tipoPorId.setMaxParcialidades(400);
+            TipoPrestamoDominio tipoActualizado = tipoPrestamoDAO.actualizarTipoPrestamo(tipoPorId);
+            System.out.println("🔄 Tipo de préstamo actualizado exitosamente: " + tipoActualizado);
+
+            // ✅ Obtener todos los tipos de préstamo
+            List<TipoPrestamoDominio> tiposPrestamo = tipoPrestamoDAO.obtenerTodosLosTiposPrestamo();
+            System.out.println("📌 Todos los tipos de préstamo disponibles:");
+            for (TipoPrestamoDominio tipo : tiposPrestamo) {
+                System.out.println(tipo);
             }
 
         } catch (PersistenciaException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("❌ Error: " + e.getMessage());
         }
     }
 }
-
-
 

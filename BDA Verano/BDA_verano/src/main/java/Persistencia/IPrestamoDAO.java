@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IPrestamoDAO {
-    PrestamoDominio crearPrestamo(PrestamoDominio prestamo) throws SQLException;
-    PrestamoDominio actualizarPrestamo(PrestamoDominio prestamo) throws SQLException;
-    PrestamoDominio obtenerPrestamoPorId(int id) throws SQLException;
-    List<PrestamoDominio> obtenerPrestamosPorEmpleado(int idEmpleado) throws SQLException;
-    List<PrestamoDominio> obtenerTodosLosPrestamos() throws SQLException;
+    PrestamoDominio crearPrestamo(PrestamoDominio prestamo) throws PersistenciaException;
+    PrestamoDominio actualizarPrestamo(PrestamoDominio prestamo) throws PersistenciaException;
+    PrestamoDominio obtenerPrestamoPorId(int id) throws PersistenciaException;
+    List<PrestamoDominio> obtenerPrestamosPorEmpleado(int idEmpleado) throws PersistenciaException;
+    List<PrestamoDominio> obtenerTodosLosPrestamos() throws PersistenciaException;
 }
